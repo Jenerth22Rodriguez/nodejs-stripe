@@ -1,0 +1,1 @@
+export const createSession = (req, res) => res.send("checkout");
