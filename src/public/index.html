@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stripe Checkout</title>
+  </head>
+  <body>
+    <h1>Buy Products</h1>
+    <button id="checkout-button">Buy Now</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      const stripe = Stripe(
+        "pk_test_51PrTx0P47Rbk4pcUcdpWBeMNvfddUF1i6PK3B1EPKuWzfDC3jOCXWKCBUG3e1ddqKGpSFNA8O1sfGyVyU1xaOcwK00WtiFUG0R"
+      ); // REPLACE with your publishable key
+
+      document
+        .getElementById("checkout-button")
+        .addEventListener("click", async () => {
+          try {
+            const res = await fetch(
+              "http://localhost:3000/create-checkout-session",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+
+            const data = await res.json();
+            console.log("Received from backend:", data);
+
+            if (!data.id) throw new Error("Missing session ID");
+
+            const result = await stripe.redirectToCheckout({
+              sessionId: data.id,
+            });
+
+            if (result.error) {
+              alert(result.error.message);
+            }
+          } catch (err) {
+            console.error("Checkout error:", err.message);
+            alert("Something went wrong.");
+          }
+        });
+    </script>
+  </body>
+</html>

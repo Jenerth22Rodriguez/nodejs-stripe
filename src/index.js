@@ -1,11 +1,17 @@
-import express from 'express'
-import paymentRouters from './routes/payment.routes.js'
-import {PORT} from './config.js'
-const app = express()
+import express from "express";
+import path from "path";
+import paymentRoutes from "./routes/payment.routes.js";
+import { PORT } from "./config.js";
 
-app.use(express.json()) 
+const app = express();
+app.use(express.json());
 
-app.use(paymentRouters)
+// Serve static files
+app.use(express.static(path.resolve("src/public")));
 
-app.listen (PORT)
-console.log('Server on port', PORT)
+// Register payment routes
+app.use(paymentRoutes);
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
